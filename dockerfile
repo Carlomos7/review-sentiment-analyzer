@@ -6,7 +6,6 @@ WORKDIR /app
 COPY pyproject.toml .
 COPY src/ src/
 COPY api/ api/
-COPY models/ models/
 
 # Install dependencies
 RUN uv pip install --system --no-cache .
