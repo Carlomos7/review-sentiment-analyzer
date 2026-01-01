@@ -4,4 +4,8 @@ version = "0.1.0"
 description = "Sentiment analysis for product reviews"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "numpy>=2.4.0",
+    "tensorflow>=2.20.0",
+    "transformers>=4.57.3",
+]
