@@ -1,0 +1,7 @@
+[project]
+name = "review-sentiment-analyzer"
+version = "0.1.0"
+description = "Sentiment analysis for product reviews"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
