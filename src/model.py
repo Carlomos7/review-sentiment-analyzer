@@ -1,13 +1,11 @@
 """Model loading and inference for sentiment analysis."""
-import os
-
 import tensorflow as tf
-from transformers import RobertaTokenizerFast
+from transformers import RobertaTokenizerFast, TFRobertaForSequenceClassification
 
 from .config import config
 
 tokenizer: RobertaTokenizerFast | None = None
-model: tf.keras.Model | None = None
+model: TFRobertaForSequenceClassification | None = None
 
 
 def load_model() -> None:
@@ -15,11 +13,7 @@ def load_model() -> None:
     global tokenizer, model
     
     tokenizer = RobertaTokenizerFast.from_pretrained(config.model_name)
-    
-    if not os.path.exists(config.model_path):
-        raise FileNotFoundError(f"Model not found at {config.model_path}")
-    
-    model = tf.keras.models.load_model(config.model_path)
+    model = TFRobertaForSequenceClassification.from_pretrained(config.model_path)
 
 
 def predict(text: str) -> dict:
