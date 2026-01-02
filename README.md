@@ -161,7 +161,6 @@ The model should be used as an **assistive tool**, not a sole decision-maker.
 This preserved pretrained language knowledge while allowing domain adaptation.
 
 #### Challenge 2: Misleading Accuracy Measurements
-**Challenge:**  
 Initial evaluation compared mismatched label formats.
 
 **Solution:**  
@@ -172,7 +171,6 @@ Initial evaluation compared mismatched label formats.
 ---
 
 #### Challenge 3: Class Imbalance
-**Challenge:**  
 Positive reviews were overrepresented.
 
 **Solution:**  
