@@ -36,22 +36,19 @@ docker compose down
 ```
 
 ### 4. Test the API
-Open http://localhost:8000/docs for interactive docs. You can test the predict endpoint directly here!!
+Open http://localhost:8501. 
 
-**Example request:**
-```
-curl -X POST http://localhost:8000/predict \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Love this dress!"}'
-```
+### 5. Run Streamlit
 
-**Example Response:**
 ```
-{
-  "label": "positive",
-  "confidence": 0.996
-}
+streamlit run app/dashboard.py
 ```
+Example review:
+
+```
+Love this dress!
+```
+Review model performance charts.
 
 ---
 
