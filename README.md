@@ -16,14 +16,19 @@ The system is designed for internal analytics and decision support rather than d
 
 ---
 
-## Set Up
-### 1. Clone Repo
+## Set Up & Deployment
+
+First, clone the repository:
+
 ```
 git clone https://github.com/Carlomos7/review-sentiment-analyzer.git
 cd review-sentiment-analyzer
 ```
+This project requires **Python 3.12 or higher**. Earlier Python versions are not supported.
 
-### 2. Setup Model
+### Option A: Run via API (Production / Integration)
+
+#### 1. Setup Model
 Download the model [(here)](https://drive.google.com/file/d/1uwHqDT7UyKgVMDgffo4NnetaYbRbqgZt/view?usp=drive_link) and unzip the model folder. Place it in the ``models/`` directory:
 
 ``` 
@@ -32,7 +37,7 @@ models/
       ├── config.json
       └── tf_model.h5
 ```
-### 3. Run the API
+#### 2. Run the API
 ```
 docker compose up --build
 ```
@@ -43,17 +48,45 @@ to stop:
 docker compose down
 ```
 
-### 4. Test the API
-Open http://localhost:8000/docs. 
+#### 3. Test the API
+Open http://localhost:8000/docs for interactive docs. You can test the predict endpoint directly here:
 
-### 5. Run Streamlit
+**Example Request:**
+```
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Love this dress!"}'
+```
+**Example Response:**
+```
+{
+  "label": "positive",
+  "confidence": 0.996
+}
+
+**Note:** The API automatically loads the model from models/final_model/ on startup. 
+
+```
+
+### Option B: Run via Streamlit UI (Demo / Visualization)
+
+#### 1. Install
+```
+pip install streamlit
+pip install plotly
+```
+
+#### 2. Run Streamlit
 
 ```
 streamlit run app/dashboard.py
 ```
-Example review:
 
-```
+#### 3. Test 
+Open http://localhost:8501/ in your browser to interact with the application.
+
+Example input:
+```text
 Love this dress!
 ```
 Review model performance charts.
