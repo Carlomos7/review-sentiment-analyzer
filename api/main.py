@@ -1,0 +1,49 @@
+"""FastAPI sentiment analysis API."""
+
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+from src import load_model, predict
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Load model on startup."""
+    load_model()
+    yield
+
+
+app = FastAPI(
+    title="Sentiment Analysis API",
+    description="Analyze sentiment of product reviews",
+    version="0.1.0",
+    lifespan=lifespan,
+)
+
+
+class ReviewRequest(BaseModel):
+    """Request model for sentiment analysis."""
+
+    text: str
+
+
+class SentimentResponse(BaseModel):
+    """Response model for sentiment analysis."""
+
+    label: str
+    confidence: float
+
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy"}
+
+
+@app.post("/predict", response_model=SentimentResponse)
+def predict_sentiment(request: ReviewRequest):
+    """Predict sentiment for a product review."""
+    result = predict(request.text)
+    return SentimentResponse(**result)
