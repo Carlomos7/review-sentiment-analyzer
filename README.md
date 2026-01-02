@@ -7,18 +7,6 @@ A key focus of this project is **controlled fine-tuning**: adapting a pretrained
 
 ---
 
-## Use Case
-E-commerce platforms receive large volumes of customer reviews every day. Manually analyzing this feedback is time-consuming and not scalable. This project demonstrates how natural language processing (NLP) can be used to:
-
-- Automatically classify customer sentiment
-- Detect negative feedback early
-- Track customer satisfaction trends
-- Support product, marketing, and customer support decisions
-
-The system is designed to **augment human decision-making**, not replace it.
-
----
-
 ## Set Up
 ### 1. Clone Repo
 ```
