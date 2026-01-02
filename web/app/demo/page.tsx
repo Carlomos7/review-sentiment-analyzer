@@ -18,15 +18,32 @@ export default function DemoPage() {
     setIsAnalyzing(true);
     setResult(null);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      console.log("Sending request with text:", text);
+      const response = await fetch("http://localhost:8000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
 
-    const sentiments = ["positive", "neutral", "negative"] as const;
-    const randomSentiment = sentiments[Math.floor(Math.random() * 3)];
-    setResult({
-      sentiment: randomSentiment,
-      confidence: Math.floor(Math.random() * 20) + 80,
-    });
-    setIsAnalyzing(false);
+      console.log("Response status:", response.status);
+
+      if (!response.ok) throw new Error("API request failed");
+
+      const data = await response.json();
+      console.log("API response:", data);
+      
+      setResult({
+        sentiment: data.label as "positive" | "neutral" | "negative",
+        confidence: Math.round(data.confidence * 100),
+      });
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setResult(null);
+      alert("Failed to analyze. Make sure the API server is running.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const sentimentColors = {
