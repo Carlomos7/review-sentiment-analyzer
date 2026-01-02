@@ -154,7 +154,6 @@ The model should be used as an **assistive tool**, not a sole decision-maker.
 ### Fine-Tuning Approach
 #### Challenge 1: Overfitting
 - **Half of the transformer encoder layers were frozen**
-- Upper encoder layers and classifier head were trainable
 - Reduced learning rates ensured stable parameter updates
 - Early stopping was applied based on validation accuracy
 
@@ -165,16 +164,13 @@ Initial evaluation compared mismatched label formats.
 
 **Solution:**  
 - Standardized label encoding  
-- Added proper validation and test evaluation  
-- Used macro F1 to better reflect class balance  
-
----
+- Added proper validation and test evaluation   
 
 #### Challenge 3: Class Imbalance
-Positive reviews were overrepresented.
+Positive reviews were overrepresented, causing overfitting
 
 **Solution:**  
-- Applied class weights during training  
+- Using early stopping to prevent overtraining 
 
 ---
 
@@ -240,17 +236,6 @@ Compared to the Amazon sentiment model, the fine-tuned Twitter RoBERTa model pro
 
 ---
 
-## Evaluation
-Model performance was evaluated using:
-- Accuracy
-- Macro Precision, Recall, and F1 score
-- Confusion matrix (NumPy implementation)
-- Qualitative testing on human-written review examples
-
-Baseline and fine-tuned models were compared on validation and test sets.
-
----
-
 ## Security Considerations
 - No personally identifiable information (PII) is collected or stored
 - Input text is processed only for sentiment inference
@@ -281,13 +266,15 @@ Human-in-the-loop ensures accountability, fairness, and continuous improvement.
 ---
 
 ## Real-World Scenario
-In production, this model could be integrated into:
-- Customer feedback dashboards
-- Review moderation tools
-- Product quality monitoring systems
-- Customer support triage pipelines
 
-Predictions would inform, not replace, human decision-making.
+In a production environment, this model can be integrated into multiple customer-facing and internal systems to surface sentiment insights at scale:
+
+- **Customer feedback dashboards** – summarize overall sentiment and highlight emerging trends
+- **Review moderation tools** – flag potentially negative or problematic reviews early
+- **Product quality monitoring systems** – identify recurring issues tied to specific products
+- **Customer support triage pipelines** – prioritize tickets based on sentiment severity
+
+**Predictions are designed to inform human decision-making, not replace it.**
 
 ---
 
