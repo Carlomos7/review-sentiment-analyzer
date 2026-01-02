@@ -260,3 +260,5 @@ wheel==0.45.1
     # via astunparse
 wrapt==2.0.1
     # via tensorflow
+streamlit
+plotly
