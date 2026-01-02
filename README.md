@@ -8,6 +8,14 @@ A key focus of this project is **controlled fine-tuning**: adapting a pretrained
 
 ---
 
+## Business Value & Target Audience
+
+This project is best suited for **B2B use cases**, where internal teams analyze large volumes of customer reviews to support product decisions, customer support prioritization, quality monitoring, and operational insights.
+
+The system is designed for internal analytics and decision support rather than direct consumer-facing applications, making it a strong fit for e-commerce platforms, marketplace operators, and enterprise teams.
+
+---
+
 ## Set Up
 ### 1. Clone Repo
 ```
@@ -36,7 +44,7 @@ docker compose down
 ```
 
 ### 4. Test the API
-Open http://localhost:8501. 
+Open http://localhost:8000/docs. 
 
 ### 5. Run Streamlit
 
@@ -70,20 +78,20 @@ Several transformer-based sentiment models were evaluated before selecting the f
 
 ---
 
-### 1. [Twitter DeBERTa](https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment-latest) (Final Choice)
+### 1. [Twitter RoBERTa](https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment-latest) (Final Choice)
 
-**Model:** Twitter DeBERTa sentiment model  
-**Architecture:** DeBERTa (Decoding-enhanced BERT with disentangled attention)  
+**Model:** Twitter RoBERTa sentiment model  
+**Architecture:** RoBERTa (Robustly Optimized BERT Approach)
 **Pretraining Data:** Large-scale Twitter sentiment data  
 
 **Overview:**  
-DeBERTa improves upon BERT-style models by disentangling content and positional embeddings, enabling more expressive attention and improved handling of nuanced sentiment.
+RoBERTa is an optimized variant of BERT that improves performance by training longer, using larger batches, and removing the next-sentence prediction objective. When fine-tuned on Twitter data, it is particularly effective at capturing informal language, sarcasm, and sentiment-heavy expressions.
 
-**Why Twitter DeBERTa was chosen:**  
-- Strong performance on sentiment benchmarks  
-- Effective handling of opinion-rich language  
-- Pretrained on short, expressive text similar in tone to customer reviews  
-- More flexible and interpretable fine-tuning behavior  
+**Why Twitter RoBERTa was chosen:**  
+- Strong performance on sentiment classification benchmarks
+- Well-suited for short, opinion-rich text similar to customer reviews
+- Robust handling of informal language, emojis, and expressive phrasing
+- Stable and efficient fine-tuning behavior for downstream sentiment tasks 
 
 ---
 
@@ -113,7 +121,7 @@ DistilBERT is a lightweight transformer optimized for speed and efficiency.
 
 ---
 
-## Model Scope & Limitations
+## Model Scope, Limitations, & ML Engineering Concerns
 
 ### Model Scope
 This model is designed to:
@@ -128,6 +136,13 @@ This model is designed to:
 - Not suitable for safety-critical or high-stakes automated decisions
 
 The model should be used as an **assistive tool**, not a sole decision-maker.
+
+### ML Engineering Concerns
+- **Class Over-Representation Risk**  
+  Overabundance of positive reviews can bias models toward majority classes, leading to overfitting. This project mitigates risk through class-aware evaluation, early stopping, and dataset balancing strategies.
+
+- **Continuous Learning & Model Stability**  
+  Periodic retraining with fresh, sanitized review data helps maintain performance as customer language, products, and expectations evolve.
 
 ---
 
@@ -160,7 +175,7 @@ Positive reviews were overrepresented, causing overfitting
 
 ---
 
-### Twitter DeBERTa vs Amazon Sentiment Analysis Model
+### Twitter RoBERTa vs Amazon Sentiment Analysis Model
 #### Amazon Sentiment Analysis Model
 ```
 Fine-tuning for up to 3 epochs...
@@ -188,7 +203,7 @@ Restoring model weights from the end of the best epoch: 1.
 ```
 Epoch 1 showed strong learning and generalization, achieving 85.0% training accuracy and 86.6% validation accuracy. This epoch produced the best validation loss, and the model checkpoint was saved. Epochs 2 and 3 continued to improve training accuracy (up to 91.0%), but validation loss increased, indicating the start of overfitting. 
 
-#### Twitter DeBERTa
+#### Twitter RoBERTa
 ```
 Fine-tuning for up to 3 epochs...
 ============================================================
@@ -222,13 +237,23 @@ Compared to the Amazon sentiment model, the fine-tuned Twitter RoBERTa model pro
 
 ---
 
-## Security Considerations
-- No personally identifiable information (PII) is collected or stored
-- Input text is processed only for sentiment inference
-- The model does not retain or memorize individual reviews
-- Training data and model artifacts should be stored securely in production
+## Security & Compliance Considerations
 
-This project assumes a **trusted deployment environment** and is not designed for adversarial or malicious input handling.
+This project is designed with data privacy, compliance, and secure deployment principles in mind:
+
+- **No PII or PHI storage**  
+  The system does not intentionally collect or store personal or sensitive information. Text is used only to determine sentiment.
+
+- **Limited data usage**  
+  Reviews are processed temporarily for inference only. The model does not remember or reproduce individual reviews.
+
+- **Safe handling in production**  
+  Training data, model files, and outputs should be stored securely when used in a real system.
+
+- **Trusted environment assumption**  
+  This project assumes it runs in a trusted, internal environment and is not designed to defend against malicious or adversarial input.
+
+**Note:** If used with human reviewers, sensitive information should be removed or masked before anyone sees the text.
 
 ---
 
@@ -251,25 +276,42 @@ Human-in-the-loop ensures accountability, fairness, and continuous improvement.
 
 ---
 
-## Real-World Scenario
+## Business Applications (B2B Focus)
 
-In a production environment, this model can be integrated into multiple customer-facing and internal systems to surface sentiment insights at scale:
+### Use Cases
 
-- **Customer feedback dashboards** – summarize overall sentiment and highlight emerging trends
-- **Review moderation tools** – flag potentially negative or problematic reviews early
-- **Product quality monitoring systems** – identify recurring issues tied to specific products
-- **Customer support triage pipelines** – prioritize tickets based on sentiment severity
+This sentiment analysis system can be applied across multiple industries to support faster decision-making, risk mitigation, and revenue optimization:
 
-**Predictions are designed to inform human decision-making, not replace it.**
+- **E-commerce platforms**  
+  Automatically adjust product rankings and visibility based on real-time sentiment trends, helping surface high-quality products and reduce exposure to poorly performing ones.
+
+- **Marketplace sellers and operators**  
+  Monitor sentiment across competitors and categories to inform pricing strategies, inventory planning, and seller performance evaluation.
+
+- **Customer support teams**  
+  Prioritize and route support tickets based on spikes in negative sentiment, improving response times and customer satisfaction.
+
+- **Compliance and risk management tools**  
+  Integrate sentiment analysis with PHI/PII screening to ensure sensitive information is flagged or removed before analyst review.
+
+- **Fashion and retail brands**  
+  Quantify how customer sentiment impacts conversion rates and revenue, enabling more accurate demand forecasting and merchandising decisions.
+
+- **Logistics and fulfillment providers**  
+  Analyze delivery-related sentiment to predict return risk, identify service issues, and optimize fulfillment routes and partners.
 
 ---
 
-## Business Value
-This project demonstrates practical business impact:
-- **Scalability:** Automated sentiment analysis at scale
-- **Efficiency:** Faster detection of customer dissatisfaction
-- **Insight:** Data-driven product and marketing decisions
-- **Trust:** Transparent, human-supervised ML system
+### Business Considerations & System Design
+Beyond model accuracy, real-world sentiment analysis systems must account for downstream business impact, operational cost, and compliance constraints. This project incorporates the following considerations to ensure production readiness:
+- **Sentiment → Rating Impact**  
+  Customer sentiment directly influences product ratings and visibility (e.g., Amazon-style ranking systems). Negative sentiment trends should surface early to prevent long-term rating degradation.
+
+- **Model Placement & Platform Fairness**  
+  Marketplace platforms require sentiment models that operate fairly across multiple sellers, while D2C deployments must carefully manage brand reputation to avoid over-weighting negative feedback during short-term fluctuations.
+
+- **Human-in-the-Loop (HITL) Cost Control**  
+  To limit operational expenses, human review is best reserved for high-risk or newly launched products, where sentiment signals are most actionable.
 
 ---
 
