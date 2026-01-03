@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Loader2, ArrowUp, History, Trash2, Plus, Clock, Paperclip, BarChart3, ThumbsUp, ThumbsDown, ClipboardCheck, ScrollText, Download } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import sentioLogo from "@/assets/sentio-logo-black.png";
+import sentioLogo from "@/assets/sentio-logo-blue.png";
 import { AreaChart, BarChart } from "@tremor/react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
@@ -373,9 +373,11 @@ export default function DemoPage() {
       {/* Sidebar */}
       <aside className="w-72 bg-white border-r border-slate-200 flex flex-col">
         <div className="p-4 border-b border-slate-100">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src={sentioLogo} alt="Sentio" width={28} height={28} />
-            <span className="font-semibold text-slate-800">Sentio</span>
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex items-center justify-center">
+              <Image src={sentioLogo} alt="Sentio" width={36} height={36} />
+            </div>
+            <span className="font-semibold text-slate-800 text-lg">Sentio</span>
           </Link>
         </div>
 

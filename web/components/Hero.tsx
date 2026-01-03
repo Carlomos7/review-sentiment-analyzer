@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Play } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import dashboardScreenshot from "@/assets/dashboard.png";
@@ -55,10 +54,9 @@ export default function Hero() {
           >
             <Link
               href="/demo"
-              className="group w-full sm:w-auto px-8 py-4 bg-sentio-500 text-white rounded-xl font-semibold hover:bg-sentio-600 transition-all shadow-lg shadow-sentio-500/25 hover:shadow-xl hover:shadow-sentio-500/30 flex items-center justify-center gap-2"
+              className="group w-full sm:w-auto px-8 py-4 bg-sentio-500 text-white rounded-xl font-semibold hover:bg-sentio-600 transition-all shadow-lg shadow-sentio-500/25 hover:shadow-xl hover:shadow-sentio-500/30 flex items-center justify-center"
             >
-              <Play className="w-4 h-4" />
-              Demo
+              Try Sentio
             </Link>
           </motion.div>
         </div>
