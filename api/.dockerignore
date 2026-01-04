@@ -5,3 +5,4 @@
 !pyproject.toml
 !src/
 !api/
+!main.py
