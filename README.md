@@ -1,5 +1,5 @@
 # Review-Sentiment-Analyzer
-![Demo](images/landing_image.webp)
+![Demo](docs/images/landing_image.webp)
 
 ## Overview
 This project implements a sentiment analysis system for e-commerce product reviews using transformer-based language models. The goal is to classify customer reviews into **negative, neutral, or positive** sentiment while ensuring strong generalization, interpretability, and responsible deployment.
