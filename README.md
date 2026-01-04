@@ -110,13 +110,89 @@ http://localhost:3000/
 
 ---
 
-## Data
-- **Dataset:** [Women’s E-Commerce Clothing Reviews](https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews)
-- **Inputs:** Review title + review text
-- **Labels:** Derived from star ratings  
-  - 1–2 stars → Negative  
-  - 3 stars → Neutral  
-  - 4–5 stars → Positive  
+## Set Up & Deployment
+
+First, clone the repository:
+
+```
+git clone https://github.com/Carlomos7/review-sentiment-analyzer.git
+cd review-sentiment-analyzer
+```
+
+This project requires **Python 3.12 or higher** and **Docker**.
+
+### Setup
+
+#### 1. Setup Model
+Download the model [(here)](https://drive.google.com/file/d/1uwHqDT7UyKgVMDgffo4NnetaYbRbqgZt/view?usp=drive_link) and unzip the model folder. Place it in the ``api/models/`` directory:
+
+``` 
+models/
+  └── final_model/
+      ├── config.json
+      └── tf_model.h5
+```
+
+#### 2. Run Services
+
+**First time (builds images):**
+```bash
+docker compose up --build
+```
+
+**Subsequent runs:**
+```bash
+docker compose up
+```
+
+**Run in background:**
+```bash
+docker compose up -d
+```
+
+**Stop services:**
+```bash
+docker compose down
+```
+
+#### 3. Run Services Separately
+
+**API only:**
+```bash
+docker compose up api
+```
+
+**Web app only:**
+```bash
+docker compose up web
+```
+
+**Note:** The web app requires the API to be running. If running separately, start the API first.
+
+#### 4. Access the Application
+
+- **Web Application:** http://localhost:3000
+- **API Documentation:** http://localhost:8000/docs
+- **API Health Check:** http://localhost:8000/health
+
+#### 5. Test the API
+
+**Example Request:**
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Love this dress!"}'
+```
+
+**Example Response:**
+```json
+{
+  "label": "positive",
+  "confidence": 0.996
+}
+```
+
+**Note:** The API automatically loads the model from `models/final_model/` on startup. Both services communicate via Docker's internal network.
 
 The dataset was split into **training, validation, and test sets (80/10/10)** to ensure unbiased evaluation.
 
