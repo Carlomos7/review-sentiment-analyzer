@@ -24,107 +24,13 @@ First, clone the repository:
 git clone https://github.com/Carlomos7/review-sentiment-analyzer.git
 cd review-sentiment-analyzer
 ```
-This project requires **Python 3.12 or higher**. Earlier Python versions are not supported.
-
-### Option A: Run via API (Production / Integration)
-
-#### 1. Setup Model
-Download the model [(here)](https://drive.google.com/file/d/1uwHqDT7UyKgVMDgffo4NnetaYbRbqgZt/view?usp=drive_link) and unzip the model folder. Place it in the ``models/`` directory:
-
-``` 
-models/
-  └── final_model/
-      ├── config.json
-      └── tf_model.h5
-```
-#### 2. Run the API
-```
-docker compose up --build
-```
-
-to stop:
-
-```
-docker compose down
-```
-
-#### 3. Test the API
-Open http://localhost:8000/docs for interactive docs. You can test the predict endpoint directly here:
-
-**Example Request:**
-```
-curl -X POST http://localhost:8000/predict \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Love this dress!"}'
-```
-**Example Response:**
-```
-{
-  "label": "positive",
-  "confidence": 0.996
-}
-```
-
-**Note:** The API automatically loads the model from models/final_model/ on startup. 
-
-### Option B: Run via Streamlit UI (Demo / Visualization)
-
-#### 1. Install
-```
-pip install streamlit
-pip install plotly
-```
-
-#### 2. Run Streamlit
-
-```
-streamlit run app/dashboard.py
-```
-
-#### 3. Test 
-Open http://localhost:8501/ in your browser to interact with the application.
-
-Example input:
-```text
-Love this dress!
-```
-### Option C: Run the Website (Frontend UI)
-
-#### 1. Start the API First
-*Please refer back to Option 1.*
-
-Make sure the API is running at: http://localhost:8000
-
-#### 2. Install Frontend Dependencies
-```
-npm install
-```
-
-#### 3. Run the Development Server
-```
-npm run dev
-```
-
-#### 4. Open the Website
-http://localhost:3000/
-
----
-
-## Set Up & Deployment
-
-First, clone the repository:
-
-```
-git clone https://github.com/Carlomos7/review-sentiment-analyzer.git
-cd review-sentiment-analyzer
-```
 
 This project requires **Python 3.12 or higher** and **Docker**.
 
 ### Setup
 
 #### 1. Setup Model
-Download the model [(here)](https://drive.google.com/file/d/1uwHqDT7UyKgVMDgffo4NnetaYbRbqgZt/view?usp=drive_link) and unzip the model folder. Place it in the ``api/models/`` directory:
+Download the model [(here)](https://drive.google.com/file/d/1uwHqDT7UyKgVMDgffo4NnetaYbRbqgZt/view?usp=drive_link) and unzip the model folder. Place it in the ``models/`` directory:
 
 ``` 
 models/
@@ -193,6 +99,16 @@ curl -X POST http://localhost:8000/predict \
 ```
 
 **Note:** The API automatically loads the model from `models/final_model/` on startup. Both services communicate via Docker's internal network.
+
+---
+
+## Data
+- **Dataset:** [Women’s E-Commerce Clothing Reviews](https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews)
+- **Inputs:** Review title + review text
+- **Labels:** Derived from star ratings  
+  - 1–2 stars → Negative  
+  - 3 stars → Neutral  
+  - 4–5 stars → Positive  
 
 The dataset was split into **training, validation, and test sets (80/10/10)** to ensure unbiased evaluation.
 
