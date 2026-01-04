@@ -63,10 +63,9 @@ curl -X POST http://localhost:8000/predict \
   "label": "positive",
   "confidence": 0.996
 }
+```
 
 **Note:** The API automatically loads the model from models/final_model/ on startup. 
-
-```
 
 ### Option B: Run via Streamlit UI (Demo / Visualization)
 
@@ -89,7 +88,25 @@ Example input:
 ```text
 Love this dress!
 ```
-Review model performance charts.
+### Option C: Run the Website (Frontend UI)
+
+#### 1. Start the API First
+*Please refer back to Option 1.*
+
+Make sure the API is running at: http://localhost:8000
+
+#### 2. Install Frontend Dependencies
+```
+npm install
+```
+
+#### 3. Run the Development Server
+```
+npm run dev
+```
+
+#### 4. Open the Website
+http://localhost:3000/
 
 ---
 
