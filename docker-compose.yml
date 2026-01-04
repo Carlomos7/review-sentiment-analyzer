@@ -1,6 +1,6 @@
 services:
   api:
-    build: .
+    build: ./api
     ports:
       - "8000:8000"
     volumes:
@@ -9,3 +9,13 @@ services:
       - TF_CPP_MIN_LOG_LEVEL=3
       - TF_ENABLE_ONEDNN_OPTS=0
       - PYTHONWARNINGS=ignore
+  web:
+    build:
+      context: ./web
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8000
+    depends_on:
+      - api
