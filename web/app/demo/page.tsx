@@ -20,6 +20,7 @@ interface AnalysisResult {
 }
 
 const STORAGE_KEY = "sentio_analysis_history";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function DemoPage() {
   const [text, setText] = useState("");
@@ -97,7 +98,7 @@ export default function DemoPage() {
       setBatchProgress({ current: i + 1, total: reviews.length });
       
       try {
-        const response = await fetch("http://localhost:8000/predict", {
+        const response = await fetch(`${API_URL}/predict`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: reviews[i] }),
@@ -193,7 +194,7 @@ export default function DemoPage() {
     setResult(null);
 
     try {
-      const response = await fetch("http://localhost:8000/predict", {
+      const response = await fetch(`${API_URL}/predict`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
