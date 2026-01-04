@@ -174,9 +174,10 @@ export default function DemoPage() {
   const reviewedItems = useMemo(() => history.filter((item) => item.humanReview), [history]);
 
   const downloadLogsCSV = () => {
-    const headers = ["Text", "Product", "Prediction", "Confidence", "Human Review", "Timestamp"];
+    const headers = ["Text", "ID", "Product", "Prediction", "Confidence", "Human Review", "Timestamp"];
     const rows = history.map((item) => [
       `"${item.text.replace(/"/g, '""')}"`,
+      item.productId ?? "",
       item.productId ? PRODUCT_CATEGORIES[item.productId] : "N/A",
       item.sentiment,
       `${item.confidence}%`,
@@ -1054,6 +1055,7 @@ export default function DemoPage() {
                       <thead className="bg-slate-50 border-b border-slate-200 sticky top-0">
                         <tr>
                           <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Text</th>
+                          <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">ID</th>
                           <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Product</th>
                           <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Prediction</th>
                           <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Confidence</th>
@@ -1065,6 +1067,9 @@ export default function DemoPage() {
                         {history.map((item) => (
                           <tr key={item.id} className="hover:bg-slate-50">
                             <td className="px-4 py-3 text-sm text-slate-700 max-w-xs truncate">{item.text}</td>
+                            <td className="px-4 py-3 text-sm text-slate-600 font-medium">
+                              {item.productId ?? "—"}
+                            </td>
                             <td className="px-4 py-3 text-xs text-slate-500 max-w-[140px] truncate">
                               {item.productId ? PRODUCT_CATEGORIES[item.productId] : "—"}
                             </td>
