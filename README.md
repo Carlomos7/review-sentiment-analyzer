@@ -24,9 +24,10 @@ First, clone the repository:
 git clone https://github.com/Carlomos7/review-sentiment-analyzer.git
 cd review-sentiment-analyzer
 ```
-This project requires **Python 3.12 or higher**. Earlier Python versions are not supported.
 
-### Option A: Run via API (Production / Integration)
+This project requires **Python 3.12 or higher** and **Docker**.
+
+### Setup
 
 #### 1. Setup Model
 Download the model [(here)](https://drive.google.com/file/d/1uwHqDT7UyKgVMDgffo4NnetaYbRbqgZt/view?usp=drive_link) and unzip the model folder. Place it in the ``models/`` directory:
@@ -37,76 +38,67 @@ models/
       ├── config.json
       └── tf_model.h5
 ```
-#### 2. Run the API
-```
+
+#### 2. Run Services
+
+**First time (builds images):**
+```bash
 docker compose up --build
 ```
 
-to stop:
-
+**Subsequent runs:**
+```bash
+docker compose up
 ```
+
+**Run in background:**
+```bash
+docker compose up -d
+```
+
+**Stop services:**
+```bash
 docker compose down
 ```
 
-#### 3. Test the API
-Open http://localhost:8000/docs for interactive docs. You can test the predict endpoint directly here:
+#### 3. Run Services Separately
+
+**API only:**
+```bash
+docker compose up api
+```
+
+**Web app only:**
+```bash
+docker compose up web
+```
+
+**Note:** The web app requires the API to be running. If running separately, start the API first.
+
+#### 4. Access the Application
+
+- **Web Application:** http://localhost:3000
+- **API Documentation:** http://localhost:8000/docs
+- **API Health Check:** http://localhost:8000/health
+
+#### 5. Test the API
 
 **Example Request:**
-```
+```bash
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
   -d '{"text": "Love this dress!"}'
 ```
+
 **Example Response:**
-```
+```json
 {
   "label": "positive",
   "confidence": 0.996
 }
 ```
 
-**Note:** The API automatically loads the model from models/final_model/ on startup. 
-
-### Option B: Run via Streamlit UI (Demo / Visualization)
-
-#### 1. Install
-```
-pip install streamlit
-pip install plotly
-```
-
-#### 2. Run Streamlit
-
-```
-streamlit run app/dashboard.py
-```
-
-#### 3. Test 
-Open http://localhost:8501/ in your browser to interact with the application.
-
-Example input:
-```text
-Love this dress!
-```
-### Option C: Run the Website (Frontend UI)
-
-#### 1. Start the API First
-*Please refer back to Option 1.*
-
-Make sure the API is running at: http://localhost:8000
-
-#### 2. Install Frontend Dependencies
-```
-npm install
-```
-
-#### 3. Run the Development Server
-```
-npm run dev
-```
-
-#### 4. Open the Website
-http://localhost:3000/
+**Note:** The API automatically loads the model from `models/final_model/` on startup. Both services communicate via Docker's internal network.
 
 ---
 
