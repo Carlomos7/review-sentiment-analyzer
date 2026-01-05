@@ -1,6 +1,6 @@
 from datetime import datetime
 import streamlit as st
-from src.model import predict
+from app.api_client import predict_sentiment, get_api_url
 
 EMOJI_MAP = {"negative": "🔴", "neutral": "🟡", "positive": "🟢"}
 
@@ -13,25 +13,31 @@ def render():
     col_analyze, col_up, col_down = st.columns([2, 1, 1])
     
     with col_analyze:
-        analyze_clicked = st.button("Analyze", type="primary", use_container_width=True)
+        analyze_clicked = st.button("Analyze", type="primary", width='stretch')
     with col_up:
-        thumbs_up = st.button("👍 Correct", use_container_width=True, disabled=not st.session_state.pending_result)
+        thumbs_up = st.button("👍 Correct", width='stretch', disabled=not st.session_state.pending_result)
     with col_down:
-        thumbs_down = st.button("👎 Wrong", use_container_width=True, disabled=not st.session_state.pending_result)
+        thumbs_down = st.button("👎 Wrong", width='stretch', disabled=not st.session_state.pending_result)
     
     if analyze_clicked:
         if review.strip():
-            with st.spinner("Analyzing..."):
-                result = predict(review)
+            try:
+                with st.spinner("Analyzing..."):
+                    # Get API URL from session state if available, otherwise use default
+                    api_url = st.session_state.get("api_url", get_api_url())
+                    result = predict_sentiment(review, api_url)
             
-            st.session_state.pending_result = {
-                "text": review[:80] + "..." if len(review) > 80 else review,
-                "full_text": review,
-                "sentiment": result["label"],
-                "confidence": result["confidence"],
-                "timestamp": datetime.now()
-            }
-            st.rerun()
+                st.session_state.pending_result = {
+                    "text": review[:80] + "..." if len(review) > 80 else review,
+                    "full_text": review,
+                    "sentiment": result["label"],
+                    "confidence": result["confidence"],
+                    "timestamp": datetime.now()
+                }
+                st.rerun()
+            except Exception as e:
+                st.error(f"Error analyzing review: {str(e)}")
+                st.info("Make sure the API is running and accessible.")
         else:
             st.warning("Please enter a review to analyze.")
     

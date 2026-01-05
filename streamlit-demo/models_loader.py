@@ -1,32 +1,48 @@
-import tensorflow as tf
-from transformers import RobertaTokenizerFast, TFRobertaForSequenceClassification
-from src.config import config
+"""Model comparison using API endpoints."""
+from typing import Optional
+from app.api_client import predict_pretrained, predict_finetuned
 
 
 class ModelComparison:
-    def __init__(self):
-        self.tokenizer = None
-        self.pretrained_model = None
-        self.finetuned_model = None
-    
-    def load_models(self):
-        self.tokenizer = RobertaTokenizerFast.from_pretrained(config.model_name)
-        self.pretrained_model = TFRobertaForSequenceClassification.from_pretrained("models/pretrained_model")
-        self.finetuned_model = TFRobertaForSequenceClassification.from_pretrained("models/final_model")
-    
-    def predict_with_model(self, text: str, model) -> dict:
-        inputs = self.tokenizer(
-            text, max_length=config.max_len, padding="max_length",
-            truncation=True, return_tensors="tf",
-        )
-        logits = model(inputs).logits
-        probs = tf.nn.softmax(logits, axis=-1).numpy()[0]
-        pred_idx = probs.argmax()
-        return {"label": config.labels[pred_idx], "confidence": float(probs[pred_idx])}
-    
-    def compare(self, text: str) -> dict:
-        return {
-            "pretrained": self.predict_with_model(text, self.pretrained_model),
-            "finetuned": self.predict_with_model(text, self.finetuned_model)
-        }
+    def __init__(self, api_url: Optional[str] = None):
+        """
+        Initialize model comparison client.
+        
+        Args:
+            api_url: Optional API URL override. Defaults to environment variable or localhost.
+        """
+        self.api_url = api_url
 
+    def load_models(self):
+        """No-op: Models are loaded on the API side."""
+
+    def predict_with_model(self, text: str, model_type: str = "finetuned") -> dict:
+        """
+        Predict sentiment using specified model type via API.
+        
+        Args:
+            text: Input text to classify.
+            model_type: Either "pretrained" or "finetuned".
+        
+        Returns:
+            Dict with 'label' and 'confidence' keys.
+        """
+        if model_type == "pretrained":
+            return predict_pretrained(text, self.api_url)
+        else:
+            return predict_finetuned(text, self.api_url)
+
+    def compare(self, text: str) -> dict:
+        """
+        Compare predictions from pretrained and fine-tuned models.
+        
+        Args:
+            text: Input text to classify.
+        
+        Returns:
+            Dict with 'pretrained' and 'finetuned' keys, each containing prediction results.
+        """
+        return {
+            "pretrained": self.predict_with_model(text, "pretrained"),
+            "finetuned": self.predict_with_model(text, "finetuned"),
+        }

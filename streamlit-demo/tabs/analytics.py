@@ -51,7 +51,7 @@ def render():
                 color_discrete_map={"Correct 👍": "#22c55e", "Wrong 👎": "#ef4444"}
             )
             fig_hitl.update_layout(margin=dict(t=0, b=0, l=0, r=0))
-            st.plotly_chart(fig_hitl, use_container_width=True)
+            st.plotly_chart(fig_hitl, width='stretch')
         
         with col_hitl2:
             st.markdown("**Model Accuracy by Category**")
@@ -79,7 +79,7 @@ def render():
         })
         fig_pie = px.pie(df_pie, values="Count", names="Sentiment", color="Sentiment", color_discrete_map=COLOR_MAP)
         fig_pie.update_layout(margin=dict(t=0, b=0, l=0, r=0))
-        st.plotly_chart(fig_pie, use_container_width=True)
+        st.plotly_chart(fig_pie, width='stretch')
     
     with col_bar:
         st.subheader("Confidence by Sentiment")
@@ -88,7 +88,7 @@ def render():
         avg_by_sentiment["sentiment"] = avg_by_sentiment["sentiment"].str.capitalize()
         fig_bar = px.bar(avg_by_sentiment, x="sentiment", y="confidence", color="sentiment", color_discrete_map=COLOR_MAP)
         fig_bar.update_layout(margin=dict(t=0, b=0, l=0, r=0), showlegend=False, yaxis_tickformat=".0%")
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, width='stretch')
     
     st.markdown("---")
     st.subheader("Sentiment Over Time")
@@ -103,7 +103,7 @@ def render():
         yaxis=dict(tickmode="array", tickvals=[0, 1, 2], ticktext=["Negative", "Neutral", "Positive"]),
         xaxis_title="Time", yaxis_title="Sentiment", margin=dict(t=10, b=0, l=0, r=0)
     )
-    st.plotly_chart(fig_line, use_container_width=True)
+    st.plotly_chart(fig_line, width='stretch')
     
     st.markdown("---")
     st.subheader("Analysis Log")
@@ -114,5 +114,5 @@ def render():
         "Feedback": "👍" if h.get("validated") == True else ("👎" if h.get("validated") == False else "—"),
         "Review": h["text"]
     } for h in history])
-    st.dataframe(df_table, use_container_width=True, hide_index=True)
+    st.dataframe(df_table, width='stretch', hide_index=True)
 

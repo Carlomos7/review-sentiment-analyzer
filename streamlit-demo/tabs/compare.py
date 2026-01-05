@@ -19,16 +19,22 @@ SAMPLE_REVIEWS = [
 
 def render(comparison):
     st.markdown("Compare predictions from the **pretrained** model and the **fine-tuned** model.")
+    st.info("💡 Make sure the API is running and has `/predict/pretrained` and `/predict/finetuned` endpoints enabled.")
     
     results = []
-    for review in SAMPLE_REVIEWS:
-        result = comparison.compare(review["text"])
-        results.append({
-            "text": review["text"],
-            "expected": review["expected"],
-            "pretrained": result["pretrained"],
-            "finetuned": result["finetuned"]
-        })
+    try:
+        for review in SAMPLE_REVIEWS:
+            result = comparison.compare(review["text"])
+            results.append({
+                "text": review["text"],
+                "expected": review["expected"],
+                "pretrained": result["pretrained"],
+                "finetuned": result["finetuned"]
+            })
+    except Exception as e:
+        st.error(f"Error comparing models: {str(e)}")
+        st.info("Make sure the API is running and accessible. Check the API URL in the sidebar.")
+        return
     
     st.subheader("📊 Comparison Results")
     
@@ -86,7 +92,7 @@ def render(comparison):
         "Pre ✓": "✓" if r["pretrained"]["label"] == r["expected"] else "✗",
         "Fine ✓": "✓" if r["finetuned"]["label"] == r["expected"] else "✗",
     } for r in results])
-    st.dataframe(df_comp, use_container_width=True, hide_index=True)
+    st.dataframe(df_comp, width='stretch', hide_index=True)
     
     st.markdown("---")
     st.subheader("🔬 Test Custom Review")
@@ -97,7 +103,11 @@ def render(comparison):
     custom_review = st.text_area("Enter a custom review to compare:", height=100, key="compare_custom")
     if st.button("Compare", type="primary", key="compare_btn"):
         if custom_review.strip():
-            st.session_state.custom_compare_result = comparison.compare(custom_review)
+            try:
+                st.session_state.custom_compare_result = comparison.compare(custom_review)
+            except Exception as e:
+                st.error(f"Error comparing review: {str(e)}")
+                st.info("Make sure the API is running and accessible.")
         else:
             st.warning("Please enter a review.")
     

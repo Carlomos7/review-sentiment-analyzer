@@ -1,7 +1,7 @@
 from datetime import datetime
 import streamlit as st
 import pandas as pd
-from src.model import predict
+from app.api_client import predict_sentiment, get_api_url
 
 EMOJI_MAP = {"negative": "🔴", "neutral": "🟡", "positive": "🟢"}
 
@@ -21,20 +21,31 @@ def render():
                 st.session_state.csv_results = []
                 st.session_state.csv_validated = []
                 progress = st.progress(0)
+                status_text = st.empty()
                 
-                for i, row in df.iterrows():
-                    review_text = str(row["review"])
-                    result = predict(review_text)
-                    st.session_state.csv_results.append({
-                        "idx": i,
-                        "text": review_text[:80] + "..." if len(review_text) > 80 else review_text,
-                        "full_text": review_text,
-                        "sentiment": result["label"],
-                        "confidence": result["confidence"],
-                    })
-                    progress.progress((i + 1) / len(df))
+                # Get API URL from session state if available, otherwise use default
+                api_url = st.session_state.get("api_url", get_api_url())
                 
-                st.rerun()
+                try:
+                    for i, row in df.iterrows():
+                        review_text = str(row["review"])
+                        status_text.text(f"Processing review {i+1}/{len(df)}...")
+                        result = predict_sentiment(review_text, api_url)
+                        st.session_state.csv_results.append({
+                            "idx": i,
+                            "text": review_text[:80] + "..." if len(review_text) > 80 else review_text,
+                            "full_text": review_text,
+                            "sentiment": result["label"],
+                            "confidence": result["confidence"],
+                        })
+                        progress.progress((i + 1) / len(df))
+                    
+                    status_text.empty()
+                    st.rerun()
+                except Exception as e:
+                    status_text.empty()
+                    st.error(f"Error processing reviews: {str(e)}")
+                    st.info("Make sure the API is running and accessible.")
     
     if st.session_state.csv_results or st.session_state.csv_validated:
         st.markdown("---")
@@ -55,7 +66,7 @@ def render():
                     st.caption(item["text"])
                 
                 with col_up:
-                    if st.button("👍", key=f"csv_up_{idx}", use_container_width=True):
+                    if st.button("👍", key=f"csv_up_{idx}", width='stretch'):
                         item["validated"] = True
                         item["timestamp"] = datetime.now()
                         st.session_state.csv_validated.append(item.copy())
@@ -64,7 +75,7 @@ def render():
                         st.rerun()
                 
                 with col_down:
-                    if st.button("👎", key=f"csv_down_{idx}", use_container_width=True):
+                    if st.button("👎", key=f"csv_down_{idx}", width='stretch'):
                         item["validated"] = False
                         item["timestamp"] = datetime.now()
                         st.session_state.csv_validated.append(item.copy())
@@ -91,7 +102,7 @@ def render():
                 csv_data,
                 "validated_reviews.csv",
                 "text/csv",
-                use_container_width=True
+                width='stretch'
             )
         
         if st.button("Clear Batch Results"):
