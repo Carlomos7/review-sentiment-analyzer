@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from src import load_model, predict
+from src import load_model, predict_finetuned, predict_pretrained
 
 
 @asynccontextmanager
@@ -23,12 +23,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS for Next.js frontend
+# CORS for Next.js frontend and Streamlit
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
+        "http://localhost:3000",  # Next.js frontend
         "http://web:3000",  # Docker service name
+        "http://localhost:8501",  # Streamlit default port
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -56,6 +57,21 @@ def health_check():
 
 @app.post("/predict", response_model=SentimentResponse)
 def predict_sentiment(request: ReviewRequest):
-    """Predict sentiment for a product review."""
-    result = predict(request.text)
+    """Predict sentiment for a product review (uses fine-tuned model by default)."""
+    result = predict_finetuned(request.text)
     return SentimentResponse(**result)
+
+
+@app.post("/predict/finetuned", response_model=SentimentResponse)
+def predict_finetuned_endpoint(request: ReviewRequest):
+    """Predict sentiment using fine-tuned model."""
+    result = predict_finetuned(request.text)
+    return SentimentResponse(**result)
+
+
+@app.post("/predict/pretrained", response_model=SentimentResponse)
+def predict_pretrained_endpoint(request: ReviewRequest):
+    """Predict sentiment using pretrained model (before fine-tuning)."""
+    result = predict_pretrained(request.text)
+    return SentimentResponse(**result)
+
