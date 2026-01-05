@@ -5,30 +5,30 @@ import { Star } from "lucide-react";
 
 const testimonials = [
   {
-    quote: "Sentio helped us identify a critical product issue within hours of launch. The real-time sentiment analysis is a game-changer.",
+    quote: "We caught a sizing issue with our new denim line within 48 hours of launch. Sentio paid for itself that week alone.",
     author: "Sarah Chen",
-    role: "VP of Product",
-    company: "TechFlow",
+    role: "Head of Product",
+    company: "Luxe Threads",
     avatar: "SC",
   },
   {
-    quote: "We went from manually reading thousands of reviews to having instant insights. Our response time dropped by 80%.",
-    author: "Marcus Johnson",
-    role: "Customer Success Lead",
-    company: "RetailBox",
-    avatar: "MJ",
+    quote: "Reading thousands of reviews manually was killing our team. Now we instantly know what shoppers love and hate about each piece.",
+    author: "Priya Patel",
+    role: "Director of E-Commerce",
+    company: "Bloom & Co",
+    avatar: "PP",
   },
   {
-    quote: "The multi-language support is incredible. We can now understand our global customers without translation delays.",
+    quote: "The fit and fabric insights are incredible. We redesigned our bestselling dress based on Sentio data and saw returns drop 40%.",
     author: "Elena Rodriguez",
-    role: "Head of CX",
-    company: "GlobalShop",
+    role: "VP of Merchandising",
+    company: "Vela Fashion",
     avatar: "ER",
   },
 ];
 
 const logos = [
-  "TechCorp", "DataFlow", "CloudBase", "ScaleUp", "GrowthLabs", "NextGen"
+  "Nordstrom", "ASOS", "Revolve", "Reformation", "Anthropologie", "Free People"
 ];
 
 export default function Testimonials() {
@@ -43,7 +43,7 @@ export default function Testimonials() {
           className="text-center mb-16"
         >
           <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-8">
-            Trusted by industry leaders
+            Trusted by leading fashion brands
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-16">
             {logos.map((logo) => (

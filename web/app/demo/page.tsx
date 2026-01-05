@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2, ArrowUp, History, Trash2, Plus, Clock, Paperclip, BarChart3, ThumbsUp, ThumbsDown, ClipboardCheck, ScrollText, Download } from "lucide-react";
+import { ArrowLeft, Loader2, ArrowUp, History, Trash2, Plus, Clock, Paperclip, BarChart3, ThumbsUp, ThumbsDown, ClipboardCheck, ScrollText, Download, Tag, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import sentioLogo from "@/assets/sentio-logo-blue.png";
@@ -17,7 +17,18 @@ interface AnalysisResult {
   timestamp: number;
   humanReview?: "agree" | "disagree";
   reviewedAt?: number;
+  productId?: number;
 }
+
+const PRODUCT_CATEGORIES: Record<number, string> = {
+  1: "Balenciaga Triple S Sneakers",
+  2: "Tassel Ankle Boots",
+  3: "Chanel Classic Flap Bag",
+  4: "Reformation Floral Midi Dress",
+  5: "Zara Oversized Blazer",
+  6: "Gucci GG Marmont Shoulder Bag",
+  7: "Dr. Martens 1460 Platform Boots",
+};
 
 const STORAGE_KEY = "sentio_analysis_history";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -29,6 +40,7 @@ export default function DemoPage() {
   const [history, setHistory] = useState<AnalysisResult[]>([]);
   const [batchProgress, setBatchProgress] = useState<{ current: number; total: number } | null>(null);
   const [activeTab, setActiveTab] = useState<"analyze" | "analytics" | "review" | "logs">("analyze");
+  const [selectedProduct, setSelectedProduct] = useState<number>(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -58,12 +70,13 @@ export default function DemoPage() {
     });
   };
 
-  const parseCSV = (content: string): string[] => {
+  const parseCSV = (content: string): { review: string; productId?: number }[] => {
     const lines = content.trim().split("\n");
     if (lines.length < 2) return [];
     
     const header = lines[0].toLowerCase().split(",").map((h) => h.trim().replace(/"/g, ""));
     const reviewIndex = header.findIndex((h) => h === "review");
+    const idIndex = header.findIndex((h) => h === "id");
     
     if (reviewIndex === -1) {
       alert('CSV must have a "review" column');
@@ -72,8 +85,11 @@ export default function DemoPage() {
 
     return lines.slice(1).map((line) => {
       const values = line.split(",");
-      return values[reviewIndex]?.trim().replace(/^"|"$/g, "") || "";
-    }).filter((review) => review.length > 0);
+      const review = values[reviewIndex]?.trim().replace(/^"|"$/g, "") || "";
+      const rawId = idIndex !== -1 ? parseInt(values[idIndex]?.trim().replace(/^"|"$/g, ""), 10) : undefined;
+      const productId = rawId && rawId >= 1 && rawId <= 7 ? rawId : undefined;
+      return { review, productId };
+    }).filter((item) => item.review.length > 0);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,27 +97,27 @@ export default function DemoPage() {
     if (!file) return;
 
     const content = await file.text();
-    const reviews = parseCSV(content);
+    const reviewItems = parseCSV(content);
     
-    if (reviews.length === 0) {
+    if (reviewItems.length === 0) {
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
     setIsAnalyzing(true);
-    setBatchProgress({ current: 0, total: reviews.length });
+    setBatchProgress({ current: 0, total: reviewItems.length });
     setResult(null);
 
     const results: AnalysisResult[] = [];
 
-    for (let i = 0; i < reviews.length; i++) {
-      setBatchProgress({ current: i + 1, total: reviews.length });
+    for (let i = 0; i < reviewItems.length; i++) {
+      setBatchProgress({ current: i + 1, total: reviewItems.length });
       
       try {
         const response = await fetch(`${API_URL}/predict`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: reviews[i] }),
+          body: JSON.stringify({ text: reviewItems[i].review }),
         });
 
         if (!response.ok) continue;
@@ -109,10 +125,11 @@ export default function DemoPage() {
         const data = await response.json();
         results.push({
           id: crypto.randomUUID(),
-          text: reviews[i].slice(0, 200),
+          text: reviewItems[i].review.slice(0, 200),
           sentiment: data.label as "positive" | "neutral" | "negative",
-          confidence: Math.round(data.confidence * 100),
-          timestamp: Date.now() - (reviews.length - i),
+          confidence: Math.floor(data.confidence * 100),
+          timestamp: Date.now() - (reviewItems.length - i),
+          productId: reviewItems[i].productId,
         });
       } catch {
         console.error(`Failed to analyze review ${i + 1}`);
@@ -157,9 +174,11 @@ export default function DemoPage() {
   const reviewedItems = useMemo(() => history.filter((item) => item.humanReview), [history]);
 
   const downloadLogsCSV = () => {
-    const headers = ["Text", "Prediction", "Confidence", "Human Review", "Timestamp"];
+    const headers = ["Text", "ID", "Product", "Prediction", "Confidence", "Human Review", "Timestamp"];
     const rows = history.map((item) => [
       `"${item.text.replace(/"/g, '""')}"`,
+      item.productId ?? "",
+      item.productId ? PRODUCT_CATEGORIES[item.productId] : "N/A",
       item.sentiment,
       `${item.confidence}%`,
       item.humanReview ? (item.humanReview === "agree" ? "Agreed" : "Disagreed") : "Pending",
@@ -207,8 +226,9 @@ export default function DemoPage() {
         id: crypto.randomUUID(),
         text: text.slice(0, 200),
         sentiment: data.label as "positive" | "neutral" | "negative",
-        confidence: Math.round(data.confidence * 100),
+        confidence: Math.floor(data.confidence * 100),
         timestamp: Date.now(),
+        productId: selectedProduct,
       };
 
       setResult(newResult);
@@ -557,6 +577,19 @@ export default function DemoPage() {
                       <Paperclip className="w-4 h-4" />
                       Attach
                     </button>
+                    <div className="relative">
+                      <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                      <select
+                        value={selectedProduct}
+                        onChange={(e) => setSelectedProduct(Number(e.target.value))}
+                        className="appearance-none pl-9 pr-8 py-1.5 border border-slate-200 hover:border-slate-300 bg-white rounded-lg text-slate-600 hover:text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sentio-500/50 transition-all cursor-pointer"
+                      >
+                        {Object.entries(PRODUCT_CATEGORIES).map(([id, name]) => (
+                          <option key={id} value={id}>{name}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    </div>
                     <span className="text-xs text-slate-400">{text.length} chars</span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -591,6 +624,12 @@ export default function DemoPage() {
                     <div className="flex-1">
                       <p className="text-sm text-slate-500 mb-1">Analyzed Text</p>
                       <p className="text-slate-700 mb-4">{result.text}</p>
+                      {result.productId && (
+                        <>
+                          <p className="text-sm text-slate-500 mb-1">Product</p>
+                          <p className="text-slate-700 mb-4">{PRODUCT_CATEGORIES[result.productId]}</p>
+                        </>
+                      )}
                       <p className="text-sm text-slate-500 mb-1">Detected Sentiment</p>
                       <p className="text-2xl font-bold capitalize text-slate-800">
                         {result.sentiment}
@@ -644,7 +683,7 @@ export default function DemoPage() {
                 <div className="mt-12 text-center text-slate-400">
                   <History className="w-12 h-12 mx-auto mb-3 opacity-50" />
                   <p>Enter text or attach a CSV to analyze sentiment</p>
-                  <p className="text-sm mt-1">CSV should have a &quot;review&quot; column</p>
+                  <p className="text-sm mt-1">CSV should have &quot;review&quot; column (required) and &quot;id&quot; column (optional, 1-7)</p>
                 </div>
               )}
             </div>
@@ -1016,6 +1055,8 @@ export default function DemoPage() {
                       <thead className="bg-slate-50 border-b border-slate-200 sticky top-0">
                         <tr>
                           <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Text</th>
+                          <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">ID</th>
+                          <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Product</th>
                           <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Prediction</th>
                           <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Confidence</th>
                           <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50">Human Review</th>
@@ -1026,6 +1067,12 @@ export default function DemoPage() {
                         {history.map((item) => (
                           <tr key={item.id} className="hover:bg-slate-50">
                             <td className="px-4 py-3 text-sm text-slate-700 max-w-xs truncate">{item.text}</td>
+                            <td className="px-4 py-3 text-sm text-slate-600 font-medium">
+                              {item.productId ?? "—"}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-slate-500 max-w-[140px] truncate">
+                              {item.productId ? PRODUCT_CATEGORIES[item.productId] : "—"}
+                            </td>
                             <td className="px-4 py-3">
                               <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                                 item.sentiment === "positive" ? "bg-emerald-100 text-emerald-700" :

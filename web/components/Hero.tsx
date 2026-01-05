@@ -22,7 +22,7 @@ export default function Hero() {
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-sentio-50 text-sentio-600 rounded-full text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-sentio-500 rounded-full animate-pulse" />
-              Now with GPT-4 Integration
+              Built for Women&apos;s Fashion Brands
             </span>
           </motion.div>
 
@@ -32,8 +32,8 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-midnight leading-tight tracking-tight"
           >
-            The sentiment analytics platform for{" "}
-            <span className="text-gradient">instant insights</span>
+            Decode what shoppers really think about{" "}
+            <span className="text-gradient">your clothing</span>
           </motion.h1>
 
           <motion.p
@@ -42,8 +42,8 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-6 text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto"
           >
-            Transform customer feedback into actionable intelligence. 
-            Understand sentiment at scale with AI-powered analysis.
+            AI-powered sentiment analysis built specifically for women&apos;s fashion. 
+            Understand fit, style, and quality feedback at scale.
           </motion.p>
 
           <motion.div

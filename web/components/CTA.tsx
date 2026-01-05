@@ -19,10 +19,10 @@ export default function CTA() {
 
           <div className="relative z-10 max-w-2xl mx-auto text-center">
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-              Ready to understand your customers better?
+              Ready to understand what your shoppers really want?
             </h2>
             <p className="text-gray-300 text-lg mb-8">
-              Join thousands of companies using Sentio to transform customer feedback into growth.
+              Join leading women&apos;s fashion brands using Sentio to turn reviews into better products and fewer returns.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
