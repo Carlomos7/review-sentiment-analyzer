@@ -1,7 +1,9 @@
 # Review-Sentiment-Analyzer
-![Demo](docs/images/landing_image.webp)
+![Demo](docs/images/image.webp)
 
 ## Overview
+Businesses that receive large volumes of customer reviews have the heavy task of either manually reading and categorizing sentiment, which can be slow and expensive, or using fully autoated sentiment models that lack transparency and quality control. As a result, this can be difficult to scale for most businesses. Without reliable sentiment analysis, teams struggle to quickly identify product issues, leading to customer dissatisfaction and operational setbacks.
+
 This project implements a sentiment analysis system for e-commerce product reviews using transformer-based language models. The goal is to classify customer reviews into **negative, neutral, or positive** sentiment while ensuring strong generalization, interpretability, and responsible deployment.
 
 A key focus of this project is **controlled fine-tuning**: adapting a pretrained language model to a new domain without overfitting or compromising reliability.
@@ -20,7 +22,7 @@ The system is designed for internal analytics and decision support rather than d
 
 First, clone the repository:
 
-```
+```bash
 git clone https://github.com/Carlomos7/review-sentiment-analyzer.git
 cd review-sentiment-analyzer
 ```
@@ -32,7 +34,7 @@ This project requires **Python 3.12 or higher** and **Docker**.
 #### 1. Setup Model
 Download the model [(here)](https://drive.google.com/file/d/1uwHqDT7UyKgVMDgffo4NnetaYbRbqgZt/view?usp=drive_link) and unzip the model folder. Place it in the ``models/`` directory:
 
-``` 
+```mint
 models/
   └── final_model/
       ├── config.json
@@ -100,15 +102,40 @@ curl -X POST http://localhost:8000/predict \
 
 **Note:** The API automatically loads the model from `models/final_model/` on startup. Both services communicate via Docker's internal network.
 
+Checking the README setup section to see where to add the Streamlit instructions:
+
+#### 6. Run Streamlit Demo
+
+The Streamlit demo provides an interactive interface for sentiment analysis with model comparison capabilities.
+
+**Prerequisites:** The API must be running (see step 3 above).
+
+**Setup:**
+```bash
+cd streamlit-demo
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**Run:**
+```bash
+streamlit run dashboard.py
+```
+
+The Streamlit app will open in your browser at http://localhost:8501.
+
+**Note:** The demo connects to the API at `http://localhost:8000` by default. You can change this in the sidebar configuration within the app.
+
 ---
 
 ## Data
 - **Dataset:** [Women’s E-Commerce Clothing Reviews](https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews)
 - **Inputs:** Review title + review text
-- **Labels:** Derived from star ratings  
-  - 1–2 stars → Negative  
-  - 3 stars → Neutral  
-  - 4–5 stars → Positive  
+- **Labels:** Derived from star ratings
+  - 1–2 stars → Negative
+  - 3 stars → Neutral
+  - 4–5 stars → Positive
 
 The dataset was split into **training, validation, and test sets (80/10/10)** to ensure unbiased evaluation.
 
@@ -122,44 +149,43 @@ Several transformer-based sentiment models were evaluated before selecting the f
 
 ### 1. [Twitter RoBERTa](https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment-latest) (Final Choice)
 
-**Model:** Twitter RoBERTa sentiment model  
+**Model:** Twitter RoBERTa sentiment model
 **Architecture:** RoBERTa (Robustly Optimized BERT Approach)
-**Pretraining Data:** Large-scale Twitter sentiment data  
+**Pretraining Data:** Large-scale Twitter sentiment data
 
-**Overview:**  
+**Overview:**
 RoBERTa is an optimized variant of BERT that improves performance by training longer, using larger batches, and removing the next-sentence prediction objective. When fine-tuned on Twitter data, it is particularly effective at capturing informal language, sarcasm, and sentiment-heavy expressions.
 
-**Why Twitter RoBERTa was chosen:**  
+**Why Twitter RoBERTa was chosen:**
 - Strong performance on sentiment classification benchmarks
 - Well-suited for short, opinion-rich text similar to customer reviews
 - Robust handling of informal language, emojis, and expressive phrasing
-- Stable and efficient fine-tuning behavior for downstream sentiment tasks 
+- Stable and efficient fine-tuning behavior for downstream sentiment tasks
 
 ---
 
 ### 2. [Amazon Sentiment Analysis Model](https://huggingface.co/LiYuan/amazon-review-sentiment-analysis) (Considered)
 
-**Overview:**  
+**Overview:**
 Models trained on Amazon reviews offer strong domain alignment for e-commerce sentiment analysis.
 
-**Why it was not selected:**  
-- Limited flexibility for controlled fine-tuning  
-- Less transparency in training and label mapping  
-- Often optimized for binary sentiment classification 
-
+**Why it was not selected:**
+- Limited flexibility for controlled fine-tuning
+- Less transparency in training and label mapping
+- Often optimized for binary sentiment classification
 
 ---
 
 ### 3. [DistilBERT](https://huggingface.co/distilbert/distilbert-base-uncased) (Considered)
 
-**Overview:**  
+**Overview:**
 DistilBERT is a lightweight transformer optimized for speed and efficiency.
 
-**Why it was not selected:**  
-- Reduced representational capacity  
+**Why it was not selected:**
+- Reduced representational capacity
 - Lacks human in the loop during labeling
-- Lower performance on nuanced sentiment classification  
-- Less effective for neutral or mixed reviews  
+- Lower performance on nuanced sentiment classification
+- Less effective for neutral or mixed reviews
 
 ---
 
@@ -180,21 +206,21 @@ This model is designed to:
 The model should be used as an **assistive tool**, not a sole decision-maker.
 
 ### ML Engineering Concerns
-- **Class Over-Representation Risk**  
+- **Class Over-Representation Risk**
   Overabundance of positive reviews can bias models toward majority classes, leading to overfitting. This project mitigates risk through class-aware evaluation, early stopping, and dataset balancing strategies.
 
-- **Continuous Learning & Model Stability**  
+- **Continuous Learning & Model Stability**
   Periodic retraining with fresh, sanitized review data helps maintain performance as customer language, products, and expectations evolve.
 
 ---
 
 ## Model & Training Strategy Documentation
-- **Framework:** TensorFlow / Keras  
-- **Architecture:** Pretrained transformer encoder + classification head  
+- **Framework:** TensorFlow / Keras
+- **Architecture:** Pretrained transformer encoder + classification head
 - **Activation:** GELU (default transformer activation for stable fine-tuning)
 
-
 ### Fine-Tuning Approach
+
 #### Challenge 1: Overfitting
 - **Half of the transformer encoder layers were frozen**
 - Reduced learning rates ensured stable parameter updates
@@ -205,21 +231,27 @@ This preserved pretrained language knowledge while allowing domain adaptation.
 #### Challenge 2: Misleading Accuracy Measurements
 Initial evaluation compared mismatched label formats.
 
-**Solution:**  
-- Standardized label encoding  
-- Added proper validation and test evaluation   
+**Solution:**
+- Standardized label encoding
+- Added proper validation and test evaluation
 
 #### Challenge 3: Class Imbalance
 Positive reviews were overrepresented, causing overfitting
 
-**Solution:**  
-- Using early stopping to prevent overtraining 
+**Solution:**
+- Using early stopping to prevent overtraining
 
 ---
 
-### Twitter RoBERTa vs Amazon Sentiment Analysis Model
+### Amazon Sentiment Analysis Model vs DistilBERT vs Twitter RoBERTa 
+
+Training behavior was analyzed using validation curves and loss ratios observed during notebook-based experimentation prior to containerized training runs.
+
 #### Amazon Sentiment Analysis Model
-```
+
+- [Amazon Sentiment Analysis Model Notebook](notebooks/sentiment_analysis_amazon_model.ipynb)
+
+```bash
 Fine-tuning for up to 3 epochs...
 ============================================================
 Epoch 1/3
@@ -245,8 +277,24 @@ Restoring model weights from the end of the best epoch: 1.
 ```
 Epoch 1 showed strong learning and generalization, achieving 85.0% training accuracy and 86.6% validation accuracy. This epoch produced the best validation loss, and the model checkpoint was saved. Epochs 2 and 3 continued to improve training accuracy (up to 91.0%), but validation loss increased, indicating the start of overfitting. 
 
-#### Twitter RoBERTa
+#### DisilBERT Model
+
+- [DistilBERT Sentiment Analysis Notebook](notebooks/sentiment_analysis_distilbert_model.ipynb)
+
+```bash
+Epoch 1/3
+2263/2263 [==============================] - 371s 137ms/step - loss: 0.3764 - accuracy: 0.8387 - val_loss: 0.3287 - val_accuracy: 0.8590
+Epoch 2/3
+2263/2263 [==============================] - 290s 128ms/step - loss: 0.2866 - accuracy: 0.8731 - val_loss: 0.3799 - val_accuracy: 0.8573
+Epoch 3/3
+2263/2263 [==============================] - 283s 125ms/step - loss: 0.2180 - accuracy: 0.9065 - val_loss: 0.4331 - val_accuracy: 0.8520
 ```
+Training accuracy steadily increased from 83.9% to 90.7%, while validation accuracy peaked early (85.9%) and then gradually declined to 85.2%. This shows the model continues learning the training data but becomes less effective at generalizing to unseen data over time.
+
+#### Twitter RoBERTa
+- [Fine-Tuning RoBERTa for Sentiment Analysis Notebook](notebooks/finetune_roberta.ipynb)
+
+```bash
 Fine-tuning for up to 3 epochs...
 ============================================================
 Epoch 1/3
