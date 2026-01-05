@@ -6,33 +6,33 @@ import { Brain, Zap, BarChart3, Globe, Shield, Sparkles } from "lucide-react";
 const features = [
   {
     icon: Brain,
-    title: "AI-Powered Analysis",
-    description: "Advanced NLP models trained on millions of reviews to understand context, sarcasm, and nuance.",
+    title: "Fashion-Trained AI",
+    description: "Models trained on millions of women's clothing reviews to understand fit, fabric, and style nuances.",
   },
   {
     icon: Zap,
     title: "Real-Time Processing",
-    description: "Analyze thousands of reviews in seconds. Get instant insights as new feedback arrives.",
+    description: "Analyze thousands of product reviews in seconds. Spot sizing issues before they become returns.",
   },
   {
     icon: BarChart3,
-    title: "Deep Analytics",
-    description: "Comprehensive dashboards with trend analysis, topic extraction, and sentiment scoring.",
+    title: "Style & Fit Analytics",
+    description: "Dashboards built for apparel: track fit sentiment, fabric feedback, and trend patterns by category.",
   },
   {
     icon: Globe,
     title: "Multi-Language Support",
-    description: "Analyze feedback in 50+ languages with the same accuracy as English.",
+    description: "Understand your global shoppers—analyze reviews in 50+ languages with fashion-specific accuracy.",
   },
   {
     icon: Shield,
     title: "Enterprise Security",
-    description: "SOC 2 compliant with end-to-end encryption. Your data stays yours.",
+    description: "SOC 2 compliant with end-to-end encryption. Your customer data stays protected.",
   },
   {
     icon: Sparkles,
-    title: "Smart Alerts",
-    description: "Get notified instantly when sentiment shifts or critical feedback needs attention.",
+    title: "Quality Alerts",
+    description: "Get notified instantly when reviews flag quality issues, sizing problems, or trending complaints.",
   },
 ];
 
@@ -51,10 +51,10 @@ export default function Features() {
             Platform
           </span>
           <h2 className="mt-4 text-3xl lg:text-4xl font-bold text-midnight">
-            Everything you need to understand your customers
+            Everything you need to understand your shoppers
           </h2>
           <p className="mt-4 text-gray-600 text-lg">
-            Powerful features built for teams who want to turn feedback into growth
+            Powerful features built for women&apos;s fashion brands who want to turn reviews into product wins
           </p>
         </motion.div>
 
