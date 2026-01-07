@@ -411,6 +411,41 @@ This project highlights the importance of thoughtful model selection, controlled
 ---
 
 ## Contributors
-This project was originally collaborated on in Google Colab by:
 
-Carlos Segarra, Jeffrey Abisai Mazariegos Lemus, Marlon Munoz, Hayden Ferguson, Kyle Anthony Hay, Chenchen Liu
+<p align="center">
+  <i>This project was originally collaborated on in Google Colab by:</i>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Carlomos7">
+    <img src="https://avatars.githubusercontent.com/u/106279547?v=4" width="90px;" style="border-radius:50%;" alt="Carlos Segarra"/>
+  </a>
+  <a href="https://github.com/KyleAnthonyHay">
+    <img src="https://avatars.githubusercontent.com/u/100221659?v=4" width="90px;" style="border-radius:50%;" alt="Kyle Anthony Hay"/>
+  </a>
+  <a href="https://github.com/chenchenchen12345">
+    <img src="https://avatars.githubusercontent.com/u/109692467?v=4" width="90px;" style="border-radius:50%;" alt="Chenchen Liu"/>
+  </a>
+  <a href="https://github.com/JeffreyM10">
+    <img src="https://avatars.githubusercontent.com/u/78449631?v=4" width="90px;" style="border-radius:50%;" alt="Jeffrey Mazariegos"/>
+  </a>
+  <a href="https://github.com/marlonmunoz">
+    <img src="https://avatars.githubusercontent.com/u/48579081?v=4" width="90px;" style="border-radius:50%;" alt="Marlon Munoz"/>
+  </a>
+  <a href="https://github.com/Hayden-Ferguson">
+    <img src="https://avatars.githubusercontent.com/u/105685979?v=4" width="90px;" style="border-radius:50%;" alt="Hayden Ferguson"/>
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Carlomos7"><b>Carlos</b></a> •
+  <a href="https://github.com/KyleAnthonyHay"><b>Kyle</b></a> •
+  <a href="https://github.com/chenchenchen12345"><b>Chenchen</b></a> •
+  <a href="https://github.com/JeffreyM10"><b>Jeffrey</b></a> •
+  <a href="https://github.com/marlonmunoz"><b>Marlon</b></a> •
+  <a href="https://github.com/Hayden-Ferguson"><b>Hayden</b></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Team-6%20Members-blueviolet?style=for-the-badge" alt="Team Size"/>
+</p>
