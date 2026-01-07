@@ -1,7 +1,28 @@
 """API client for sentiment analysis predictions."""
 import os
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from typing import Optional
+
+# Create a session with retry strategy
+_session = None
+
+
+def get_session():
+    """Get or create a requests session with retry strategy."""
+    global _session
+    if _session is None:
+        _session = requests.Session()
+        retry_strategy = Retry(
+            total=3,
+            backoff_factor=0.3,
+            status_forcelist=[429, 500, 502, 503, 504],
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        _session.mount("http://", adapter)
+        _session.mount("https://", adapter)
+    return _session
 
 
 def get_api_url() -> str:
@@ -26,7 +47,8 @@ def predict_sentiment(text: str, api_url: Optional[str] = None) -> dict:
     if api_url is None:
         api_url = get_api_url()
     
-    response = requests.post(
+    session = get_session()
+    response = session.post(
         f"{api_url}/predict",
         json={"text": text},
         timeout=30
@@ -54,7 +76,8 @@ def predict_pretrained(text: str, api_url: Optional[str] = None) -> dict:
     
     # Try the pretrained endpoint, fallback to main predict if not available
     try:
-        response = requests.post(
+        session = get_session()
+        response = session.post(
             f"{api_url}/predict/pretrained",
             json={"text": text},
             timeout=30
@@ -85,7 +108,8 @@ def predict_finetuned(text: str, api_url: Optional[str] = None) -> dict:
     
     # Try the finetuned endpoint, fallback to main predict if not available
     try:
-        response = requests.post(
+        session = get_session()
+        response = session.post(
             f"{api_url}/predict/finetuned",
             json={"text": text},
             timeout=30
@@ -111,7 +135,8 @@ def health_check(api_url: Optional[str] = None) -> bool:
         api_url = get_api_url()
     
     try:
-        response = requests.get(f"{api_url}/health", timeout=5)
+        session = get_session()
+        response = session.get(f"{api_url}/health", timeout=5)
         return response.status_code == 200
     except requests.RequestException:
         return False
